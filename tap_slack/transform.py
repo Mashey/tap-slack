@@ -20,7 +20,7 @@ def transform_json(stream, data, date_fields, channel_id=None):
                         file_ids.append(file_id)
                 record['file_ids'] = file_ids
 
-            if stream == "messages" or "threads":
+            if stream in ["messages", "threads"]:
                 # add channel_id to the message
                 record['channel_id'] = channel_id
 
@@ -33,9 +33,5 @@ def transform_json(stream, data, date_fields, channel_id=None):
             for date_field in date_fields:
                 timestamp = record.get(date_field, None)
                 if timestamp and isinstance(timestamp, str):
-                    if stream == 'messages' or stream == "threads" and date_field == 'ts':
-                        record['thread_ts'] = timestamp
-                        record[date_field] = decimal_timestamp_to_utc_timestamp(timestamp)
-                    else:
-                        record[date_field] = decimal_timestamp_to_utc_timestamp(timestamp)
+                    record[date_field] = decimal_timestamp_to_utc_timestamp(timestamp)
     return data
